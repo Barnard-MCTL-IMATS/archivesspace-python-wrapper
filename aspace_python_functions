@@ -1,0 +1,57 @@
+import requests
+import pandas as pd
+import os
+import urllib
+import json
+
+def create_api_ref():
+    api_ref_csv = "path/to/ref/archives_space_api_reference.csv"
+    methods     = [m for m in pd.read_csv(api_ref_csv)['http_method']]
+    endpoints   = [e for e in pd.read_csv(api_ref_csv)['endpoint']]
+    api_ref     = list(zip(methods, endpoints))
+    return api_ref
+
+def get_resource_by_id(root, headers, resource_id):
+    resource_endpoint = 'repositories/2/resources'
+    resource_id = str(resource_id)
+    endpoint = os.path.join(root,resource_endpoint, resource_id)
+    resource = requests.get(endpoint, headers = headers).json()
+    return resource
+
+def get_object_by_id(root, headers, object_id):
+    object_endpoint = 'repositories/2/archival_objects'
+    object_id = str(object_id)
+    endpoint = os.path.join(root,object_endpoint, object_id)
+    object_ = requests.get(endpoint, headers = headers).json()
+    return object_
+
+def search_archives_space(root, headers, query):
+    search_endpoint = os.path.join(root, 'search?')
+    parameters      = { 'all_ids' : 'true', 'page' : '1', 'page_size': '20000', 'q' : query}
+    search_url      = search_endpoint + urllib.parse.urlencode(parameters)
+    request = requests.get(e, headers = headers).json()
+    results = request['results']
+    return results
+
+def update_resource(root, headers, resource_id, key_to_update, value):
+    resource_endpoint = 'repositories/2/resources'
+    resource_id       = str(resource_id)
+    endpoint = os.path.join(root,resource_endpoint, resource_id)
+    resource = requests.get(endpoint, headers = headers).json()
+    resource[key_to_update] = value
+    updated_resource        = json.dumps(resource)
+    status = requests.post(endpoint, headers=headers, data=updated_resource).json()
+    return status
+    
+    
+api_ref  = create_api_ref() # helpful api reference...
+
+# Authenticate
+
+root     = ''
+user     = ''
+password = ''
+
+session  = requests.post(os.path.join(root, 'users', user, 'login?password=' + password)).json()
+token    = session["session"]
+headers  = {'X-ArchivesSpace-Session': token, 'Content_Type': 'applications/json'}
