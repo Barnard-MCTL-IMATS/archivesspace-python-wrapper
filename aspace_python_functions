@@ -55,3 +55,9 @@ password = ''
 session  = requests.post(os.path.join(root, 'users', user, 'login?password=' + password)).json()
 token    = session["session"]
 headers  = {'X-ArchivesSpace-Session': token, 'Content_Type': 'applications/json'}
+
+
+# Example Usage
+
+query   = "New York City 1920's"
+results = search_archives_space(root, headers, query)
