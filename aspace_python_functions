@@ -14,7 +14,7 @@ def create_api_ref():
 def get_resource_by_id(root, headers, resource_id):
     resource_endpoint = 'repositories/2/resources'
     resource_id = str(resource_id)
-    endpoint = os.path.join(root,resource_endpoint, resource_id)
+    endpoint = os.path.join(root, resource_endpoint, resource_id)
     resource = requests.get(endpoint, headers = headers).json()
     return resource
 
@@ -27,9 +27,9 @@ def get_object_by_id(root, headers, object_id):
 
 def search_archives_space(root, headers, query):
     search_endpoint = os.path.join(root, 'search?')
-    parameters      = { 'all_ids' : 'true', 'page' : '1', 'page_size': '20000', 'q' : query}
+    parameters      = { 'all_ids' : 'true', 'page' : '1', 'page_size' : '20000', 'q' : query}
     search_url      = search_endpoint + urllib.parse.urlencode(parameters)
-    request = requests.get(e, headers = headers).json()
+    request = requests.get(search_url, headers = headers).json()
     results = request['results']
     return results
 
